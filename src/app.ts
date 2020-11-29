@@ -2,6 +2,8 @@ import express, { Application, Request, Response, NextFunction } from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 
+import userRouter from './routes/user'
+
 dotenv.config({ path: './.env' })
 
 mongoose
@@ -16,9 +18,8 @@ mongoose
 
 const app: Application = express()
 
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-  res.send('hello')
-})
+app.use(express.json())
+app.use('/api/v1/users', userRouter);
 
 const port = process.env.PORT || 3000
 app.listen(process.env.PORT, () => {
