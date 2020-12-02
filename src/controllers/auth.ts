@@ -1,11 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
+import catchAsync from '../utils/catchAsync'
 import User from '../models/user'
 
-export const signup = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const signup = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const user = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -21,4 +18,4 @@ export const signup = async (
   })
 
   next()
-}
+})
