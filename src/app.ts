@@ -19,7 +19,7 @@ mongoose
 const app: Application = express()
 
 app.use(express.json())
-app.use('/api/v1/users', userRouter);
+app.use('/api/v1/users', userRouter)
 
 const port = process.env.PORT || 3000
 app.listen(process.env.PORT, () => {
