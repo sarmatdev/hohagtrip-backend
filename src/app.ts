@@ -1,6 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import morgan from 'morgan'
 
 import userRouter from './routes/user'
 
@@ -17,6 +18,10 @@ mongoose
   .catch(() => console.log('❌ DB connection error!'))
 
 const app: Application = express()
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'))
+}
 
 app.use(express.json())
 app.use('/api/v1/users', userRouter)
