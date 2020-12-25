@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "start": "node dist/app.js",
+    "start": "yarn build && node dist/app.js",
     "dev": "NODE_ENV=development nodemon src/app.ts",
     "build": "tsc -p .",
     "lint": "eslint . --ext .ts",
