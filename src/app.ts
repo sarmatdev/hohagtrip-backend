@@ -2,6 +2,7 @@ import express, { Application, Request, Response, NextFunction } from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import morgan from 'morgan'
+import cors from 'cors'
 
 import userRouter from './routes/user'
 
@@ -23,8 +24,11 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
+app.use(cors())
 app.use(express.json())
 app.use('/api/v1/users', userRouter)
+
+app.options('*', cors())
 
 app.get('/ping', (req: Request, res: Response) => {
   res.status(200).send('pong')
