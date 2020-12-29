@@ -1,4 +1,4 @@
-import express, { Application, Request, Response, NextFunction } from 'express'
+import express, { Application, Request, Response } from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import morgan from 'morgan'
