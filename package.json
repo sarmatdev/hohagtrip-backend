@@ -6,7 +6,7 @@
   "scripts": {
     "start": "yarn build && node dist/app.js",
     "dev": "NODE_ENV=development nodemon src/app.ts",
-    "build": "tsc -p .",
+    "build": "tsc --skipLibCheck",
     "lint": "eslint . --ext .ts",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
