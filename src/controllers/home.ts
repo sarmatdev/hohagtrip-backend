@@ -39,3 +39,21 @@ export const createHome = catchAsync(async (req: Request, res: Response, next: N
     }
   })
 })
+
+export const updateHome = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const home = await Home.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true
+  })
+
+  if (!home) {
+    return next(new AppError('No home found by this ID', 404))
+  }
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      home
+    }
+  })
+})
