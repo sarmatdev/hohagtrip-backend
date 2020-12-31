@@ -50,7 +50,7 @@ export const updateHome = catchAsync(async (req: Request, res: Response, next: N
     return next(new AppError('No home found by this ID', 404))
   }
 
-  res.status(201).json({
+  res.status(200).json({
     status: 'success',
     data: {
       home
