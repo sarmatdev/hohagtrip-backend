@@ -1,9 +1,9 @@
 import { Router } from 'express'
-import { getAllHomes, getHome } from '../controllers/home'
+import { getAllHomes, getHome, createHome } from '../controllers/home'
 
 const router: Router = Router()
 
-router.route('/').get(getAllHomes)
+router.route('/').get(getAllHomes).post(createHome)
 router.route('/:id').get(getHome)
 
 export default router

@@ -28,3 +28,14 @@ export const getHome = catchAsync(async (req: Request, res: Response, next: Next
     }
   })
 })
+
+export const createHome = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const newHome = await Home.create(req.body)
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      newHome
+    }
+  })
+})
