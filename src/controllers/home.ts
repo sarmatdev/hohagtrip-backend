@@ -57,3 +57,16 @@ export const updateHome = catchAsync(async (req: Request, res: Response, next: N
     }
   })
 })
+
+export const deleteHome = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const home = await Home.findByIdAndDelete(req.params.id)
+
+  if (!home) {
+    return next(new AppError('No home found by this ID', 404))
+  }
+
+  res.status(204).json({
+    status: 'success',
+    data: null
+  })
+})
