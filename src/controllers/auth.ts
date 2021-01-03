@@ -6,7 +6,6 @@ import User from '../models/user'
 import catchAsync from '../utils/catchAsync'
 import AppError from '../utils/appError'
 import sendEmail from '../utils/email'
-import { strict } from 'assert'
 
 const signToken = (id: string) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
