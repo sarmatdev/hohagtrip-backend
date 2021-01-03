@@ -69,6 +69,18 @@ UserSchema.methods.correctPassword = async function (candidatePassword: string, 
   return await bcrypt.compare(candidatePassword, userPassword)
 }
 
+UserSchema.methods.changedPasswordAfter = function (ctx: UserDocument, JWTTimestamp) {
+  if (ctx.passwordChangedAt) {
+    //eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const changedTimestamp = parseInt(ctx.passwordChangedAt.getTime() / 1000, 10)
+
+    return JWTTimestamp < changedTimestamp
+  }
+
+  return false
+}
+
 UserSchema.methods.createPasswordResetToken = function (ctx: UserDocument): string {
   const resetToken = crypto.randomBytes(32).toString('hex')
 
