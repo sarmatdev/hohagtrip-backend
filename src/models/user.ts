@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import { model, Schema, Model, Document } from 'mongoose'
 import { NextFunction } from 'express'
 import validator from 'validator'
@@ -8,6 +9,12 @@ interface IUser extends Document {
   email: string
   password: string
   passwordConfirm: string
+}
+
+interface UserDocument extends IUser {
+  passwordChangedAt?: number
+  passwordResetToken?: string
+  passwordResetExpires?: number
 }
 
 const UserSchema: Schema = new Schema({
@@ -39,13 +46,22 @@ const UserSchema: Schema = new Schema({
     validate: function (el: string) {
       return el === this.password
     }
-  }
+  },
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date
 })
 
-UserSchema.pre<IUser>('save', async function (next: NextFunction) {
+UserSchema.pre<UserDocument>('save', async function (next: NextFunction) {
   if (!this.isModified('password')) return next()
   this.password = await bcrypt.hash(this.password, 12)
   this.passwordConfirm = undefined
+  next()
+})
+
+UserSchema.pre<UserDocument>('save', function (next: NextFunction): void {
+  if (!this.isModified('password') || this.isNew) return next()
+  this.passwordChangedAt = Date.now() - 1000
   next()
 })
 
@@ -53,6 +69,15 @@ UserSchema.methods.correctPassword = async function (candidatePassword: string, 
   return await bcrypt.compare(candidatePassword, userPassword)
 }
 
-const User: Model<IUser> = model('User', UserSchema)
+UserSchema.methods.createPasswordResetToken = function (ctx: UserDocument): string {
+  const resetToken = crypto.randomBytes(32).toString('hex')
+
+  ctx.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+  ctx.passwordResetExpires = Date.now() + 10 * 60 * 1000
+
+  return resetToken
+}
+
+const User: Model<UserDocument> = model<UserDocument>('User', UserSchema)
 
 export default User
