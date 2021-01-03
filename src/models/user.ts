@@ -15,6 +15,7 @@ interface UserDocument extends IUser {
   passwordChangedAt?: number
   passwordResetToken?: string
   passwordResetExpires?: number
+  active?: boolean
 }
 
 const UserSchema: Schema = new Schema({
@@ -49,7 +50,12 @@ const UserSchema: Schema = new Schema({
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
-  passwordResetExpires: Date
+  passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
+  }
 })
 
 UserSchema.pre<UserDocument>('save', async function (next: NextFunction) {
