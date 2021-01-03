@@ -11,7 +11,7 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj
 }
 
-export const update = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const updateMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError('This route is not for password update! Please, use instead the /updatePassword endpoint!', 400)
@@ -30,5 +30,14 @@ export const update = catchAsync(async (req: Request, res: Response, next: NextF
     data: {
       user
     }
+  })
+})
+
+export const deleteMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  await User.findByIdAndUpdate(req.params.id, { active: false })
+
+  res.status(204).json({
+    status: 'success',
+    data: null
   })
 })
