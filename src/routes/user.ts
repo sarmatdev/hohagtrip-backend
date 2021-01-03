@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { signup, login, forgot, reset, updatePassword, protect } from '../controllers/auth'
+import { update } from '../controllers/user'
 
 const router: Router = Router()
 
@@ -8,5 +9,6 @@ router.post('/login', login)
 router.post('/forgot', forgot)
 router.patch('/reset/:token', reset)
 router.patch('/updatePassword/:id', protect, updatePassword)
+router.patch('/update/:id', protect, update)
 
 export default router
