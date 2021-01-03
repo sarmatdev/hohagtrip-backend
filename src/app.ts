@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import morgan from 'morgan'
 import cors from 'cors'
+import rateLimit from 'express-rate-limit'
 
 import userRouter from './routes/user'
 import homeRouter from './routes/home'
@@ -25,6 +26,13 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in an hour!'
+})
+
+app.use('/api', limiter)
 app.use(cors())
 app.use(express.json())
 app.use('/api/v1/users', userRouter)
