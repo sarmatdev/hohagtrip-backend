@@ -5,6 +5,9 @@ import morgan from 'morgan'
 import cors from 'cors'
 import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
+import mongoSanitize from 'express-mongo-sanitize'
+import xss from 'xss-clean'
+import hpp from 'hpp'
 
 import userRouter from './routes/user'
 import homeRouter from './routes/home'
@@ -34,6 +37,9 @@ const limiter = rateLimit({
 })
 
 app.use('/api', limiter)
+app.use(mongoSanitize())
+app.use(xss())
+app.use(hpp())
 app.use(helmet())
 app.use(cors())
 app.use(express.json({ limit: '10kb' }))
