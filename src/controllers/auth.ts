@@ -1,10 +1,12 @@
 import crypto from 'crypto'
+import { promisify } from 'util'
 import jwt from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
 import User from '../models/user'
 import catchAsync from '../utils/catchAsync'
 import AppError from '../utils/appError'
 import sendEmail from '../utils/email'
+import { strict } from 'assert'
 
 const signToken = (id: string) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -114,6 +116,20 @@ export const reset = catchAsync(async (req: Request, res: Response, next: NextFu
   user.passwordConfirm = req.body.passwordConfirm
   user.passwordResetToken = undefined
   user.passwordResetExpires = undefined
+  await user.save()
+
+  createSendToken(user, 200, res)
+})
+
+export const updatePassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const user = await User.findById(req.params.id).select('+password')
+
+  if (!user.schema.methods.correctPassword(req.body.passwordCurrent, user.password)) {
+    return next(new AppError('Your current password is wrong!', 400))
+  }
+
+  user.password = req.body.password
+  user.passwordConfirm = req.body.passwordConfirm
   await user.save()
 
   createSendToken(user, 200, res)
