@@ -2,6 +2,7 @@ import User from '../models/user'
 import catchAsync from '../utils/catchAsync'
 import AppError from '../utils/appError'
 import { Request, Response, NextFunction } from 'express'
+import jwt from 'jsonwebtoken'
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {}
@@ -39,5 +40,18 @@ export const deleteMe = catchAsync(async (req: Request, res: Response, next: Nex
   res.status(204).json({
     status: 'success',
     data: null
+  })
+})
+
+export const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const token = req.headers.authorization.split(' ')[1]
+  const id = jwt.decode(token).id
+  const user = await User.findById(id)
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user
+    }
   })
 })
