@@ -1,26 +1,16 @@
-import { model, Schema, Model, Document } from 'mongoose'
+import { prop, getModelForClass } from '@typegoose/typegoose'
 
-interface IHome extends Document {
-  name: string
-  price: number
-  location: string
+class Home {
+  @prop({ required: true })
+  public name!: string
+
+  @prop({ required: true })
+  public price!: number
+
+  @prop({ required: true })
+  public location!: string
 }
 
-const HomeSchema: Schema = new Schema({
-  name: {
-    type: String,
-    required: [true, 'Please, set the home name']
-  },
-  price: {
-    type: String,
-    required: [true, 'Please, set the price']
-  },
-  location: {
-    type: String,
-    required: [true, 'Please, set the home location']
-  }
-})
+const HomeModel = getModelForClass(Home)
 
-const Home: Model<IHome> = model('Home', HomeSchema)
-
-export default Home
+export default HomeModel
