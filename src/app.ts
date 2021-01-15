@@ -11,6 +11,7 @@ import hpp from 'hpp'
 
 import userRouter from './routes/user'
 import homeRouter from './routes/home'
+import friendRouter from './routes/friend'
 
 dotenv.config({ path: './.env' })
 
@@ -45,6 +46,7 @@ app.use(cors())
 app.use(express.json({ limit: '10kb' }))
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/homes', homeRouter)
+app.use('/api/v1/friends', friendRouter)
 
 app.options('*', cors())
 
