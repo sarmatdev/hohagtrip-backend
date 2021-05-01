@@ -36,6 +36,10 @@ const createSendToken = (user, statusCode: number, res: Response) => {
   })
 }
 
+export const googleAuth = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  createSendToken(req.user, 201, res)
+})
+
 export const signup = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const user = await User.create({
     firstName: req.body.firstName,
