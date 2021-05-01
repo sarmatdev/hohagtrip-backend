@@ -57,7 +57,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
 
   const user = await User.findOne({ email }).select('+password')
 
-  if (!user || !(await user.schema.methods.correctPassword(password, user.password))) {
+  if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password!', 401))
   }
 
@@ -82,7 +82,7 @@ export const forgot = catchAsync(async (req: Request, res: Response, next: NextF
     return next(new AppError('There is no user with email address.', 404))
   }
 
-  const resetToken = user.schema.methods.createPasswordResetToken(user)
+  const resetToken = user.createPasswordResetToken()
   await user.save({ validateBeforeSave: false })
 
   const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`
@@ -132,7 +132,7 @@ export const reset = catchAsync(async (req: Request, res: Response, next: NextFu
 export const updatePassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const user = await User.findById(req.params.id).select('+password')
 
-  if (!user.schema.methods.correctPassword(req.body.passwordCurrent, user.password)) {
+  if (!user.correctPassword(req.body.passwordCurrent, user.password)) {
     return next(new AppError('Your current password is wrong!', 400))
   }
 
@@ -161,7 +161,7 @@ export const protect = catchAsync(async (req: Request, res: Response, next: Next
     return next(new AppError('The user belonging to this token does no longer exist.', 401))
   }
 
-  if (currentUser.schema.methods.changedPasswordAfter(currentUser, decoded.iat)) {
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(new AppError('User recently changed password! Please log in again.', 401))
   }
 
