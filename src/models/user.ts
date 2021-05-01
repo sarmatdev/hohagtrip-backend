@@ -4,11 +4,7 @@ import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import { prop, pre, getModelForClass } from '@typegoose/typegoose'
 import { instanceMethod } from 'typegoose'
-
-enum Role {
-  USER = 'user',
-  ADMIN = 'admin'
-}
+import { Role, UserDocument } from '../interfaces/models/userDocument'
 
 @pre<User>('save', async function (next: NextFunction): Promise<void> {
   if (!this.isModified('password')) return next()
@@ -38,19 +34,22 @@ class User {
   })
   public email!: string
 
+  @prop({ required: false })
+  public image?: string
+
   @prop({ enum: Role, default: 'user' })
   public role?: string
 
-  @prop({ required: [true, 'Please provide a password'], minlength: 8, select: false })
-  public password!: string
+  @prop({ required: [false, 'Please provide a password'], minlength: 8, select: false })
+  public password?: string
 
   @prop({
-    required: [true, 'Please confirm your password'],
+    required: [false, 'Please confirm your password'],
     validate: function (el: string) {
       return el === this.password
     }
   })
-  public passwordConfirm!: string
+  public passwordConfirm?: string
 
   @prop()
   public passwordChangedAt?: number
