@@ -6,6 +6,7 @@ import User from '../models/user'
 import catchAsync from '../utils/catchAsync'
 import AppError from '../utils/appError'
 import sendEmail from '../utils/email'
+import fetchGoogleUserData from '../utils/googleAuth'
 
 const signToken = (id: string) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -37,7 +38,23 @@ const createSendToken = (user, statusCode: number, res: Response) => {
 }
 
 export const googleAuth = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  createSendToken(req.user, 201, res)
+  const { data } = await fetchGoogleUserData(req.body.idToken)
+
+  const user = await User.findOne({ email: data.email })
+
+  if (user) {
+    return createSendToken(user, 201, res)
+  }
+
+  const newUser = await User.create({
+    firstName: data.given_name,
+    lastName: data.family_name,
+    googleId: data.sub,
+    email: data.email,
+    image: data.picture
+  })
+
+  createSendToken(newUser, 201, res)
 })
 
 export const signup = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -65,19 +82,9 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     return next(new AppError('Incorrect email or password!', 401))
   }
 
-  const token = signToken(user._id)
-
   user.password = undefined
 
-  res.status(200).json({
-    status: 'success',
-    token,
-    data: {
-      user
-    }
-  })
-
-  next()
+  createSendToken(user, 201, res)
 })
 
 export const forgot = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
