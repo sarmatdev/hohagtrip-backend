@@ -8,15 +8,12 @@ import helmet from 'helmet'
 import mongoSanitize from 'express-mongo-sanitize'
 import xss from 'xss-clean'
 import hpp from 'hpp'
-import passport from 'passport'
-import passportConfig from './libs/passport'
 
 import authRouter from './routes/auth'
 import userRouter from './routes/user'
 import homeRouter from './routes/home'
 
 dotenv.config({ path: './.env' })
-passportConfig(passport)
 
 mongoose
   .connect(`${process.env.DATABASE}`, {
@@ -47,8 +44,6 @@ app.use(hpp())
 app.use(helmet())
 app.use(cors())
 app.use(express.json({ limit: '10kb' }))
-
-app.use(passport.initialize())
 
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/users', userRouter)
