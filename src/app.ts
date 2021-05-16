@@ -51,7 +51,7 @@ app.use('/api/v1/homes', homeRouter)
 
 app.options('*', cors())
 
-app.get('/ping', (req: Request, res: Response) => {
+app.get('/api/v1/ping', (req: Request, res: Response) => {
   res.status(200).send('pong')
 })
 
