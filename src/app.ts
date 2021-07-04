@@ -55,6 +55,10 @@ app.get('/api/v1/ping', (req: Request, res: Response) => {
   res.status(200).send('pong')
 })
 
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).send('Hello Universe')
+})
+
 const port = process.env.PORT || 3000
 app.listen(process.env.PORT, () => {
   console.log(`🚀 Server is running on port ${port}`)
